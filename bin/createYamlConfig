@@ -1,0 +1,59 @@
+#!/usr/bin/env php
+<?php
+
+if ($argc < 7) {
+    echo "Usage: createYamlConfig data-length db-host db-user db-password db-name outfile\n\n";
+    exit;
+}
+
+list($self, $dataLen, $dbHost, $dbUser, $dbPass, $dbName, $outFile) = $argv;
+
+mysql_connect($dbHost, $dbUser, $dbPass);
+mysql_select_db($dbName);
+mysql_query("set names utf8");
+
+$data = array(
+    'serverType' => 'mysql',
+    'charset'    => 'utf-8',
+    'dataLen'    => $dataLen,
+    'data'       => array()
+);
+
+$res = mysql_query('show tables');
+
+while($row = mysql_fetch_row($res)) {
+    $name = $row[0];
+    $data['data'][$name] = array();
+
+    $sql = "desc $name";
+
+    $descRes = mysql_query($sql);
+    while($descRow = mysql_fetch_assoc($descRes)) {
+        preg_match('/^[a-z]+/', $descRow['Type'], $match);
+        $type = $match[0];
+        preg_match('/\(([0-9]+)\)/', $descRow['Type'], $match);
+        if(isset($match[1])) {
+            $len = $match[1];
+        } else {
+            $len = 0;
+        }
+        $isempty = $descRow['Null'] == 'No' ? false : true;
+        $isAuto = $descRow['Extra'] == 'auto_increment' ? true : false;
+
+        $data['data'][$name]['fields'][$descRow['Field']] = array(
+            'type' => $type,
+            'len'  => $len,
+            'empty' => $isempty,
+            'isAuto' => $isAuto
+        );
+
+        $data['data'][$name]['dbInfo'] = array(
+            'type' => 'master',
+            'relation' => '',
+            'name' => $name
+        );
+    }
+}
+
+yaml_emit_file($outFile, $data, "utf-8");
+
