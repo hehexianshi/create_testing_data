@@ -1,0 +1,33 @@
+<?php
+namespace createTextData\create;
+
+use createTextData\create\base\IntType;
+use createTextData\create\base\CharType;
+
+class Create
+{
+
+    private $file;
+
+    private $dbHost;
+    private $dbPass;
+    private $dbName;
+
+    public function exec()
+    {
+        $create = yaml_parse_file($this->file);
+        
+        // connect mysql
+        mysql_connect();
+
+    
+    
+    }
+
+    public function __set($key, $val) {
+    
+        $this->key = $val; 
+        return $this->
+    }
+}
+

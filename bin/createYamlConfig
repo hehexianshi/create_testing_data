@@ -37,6 +37,10 @@ while($row = mysql_fetch_row($res)) {
         } else {
             $len = 0;
         }
+
+        preg_match('/unsigned/', $descRow['Type'], $match);
+        $unsign = $match ? true : false;
+
         $isempty = $descRow['Null'] == 'No' ? false : true;
         $isAuto = $descRow['Extra'] == 'auto_increment' ? true : false;
 
@@ -44,7 +48,8 @@ while($row = mysql_fetch_row($res)) {
             'type' => $type,
             'len'  => $len,
             'empty' => $isempty,
-            'isAuto' => $isAuto
+            'isAuto' => $isAuto,
+            'unsign' => $unsign
         );
 
         $data['data'][$name]['dbInfo'] = array(
