@@ -12,6 +12,9 @@
     "require": {
         "php" : ">=5.4.0"
     },
+    "suggest": {
+        "ext-yaml" : "must use php extension yaml"
+    },
     "autoload" : {
         "psr-4" : {
             "" : "src/"    
