@@ -5,7 +5,7 @@ create testing data
 
 Usage
 -------------------
-安装php扩展 extension
+安装php扩展 yaml 
 ```php
 phpize
 ./configure
